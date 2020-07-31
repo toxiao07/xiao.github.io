@@ -10,10 +10,10 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @MapperScan({"com.myself.modules.*.dao"})
 @EnableTransactionManagement
 @ServletComponentScan
-public class GcpActgApplication {
+public class MyselfApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(GcpActgApplication.class, args);
+        SpringApplication.run(MyselfApplication.class, args);
     }
 
 }
