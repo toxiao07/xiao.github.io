@@ -1,5 +1,6 @@
 package com.myself.generator;
 import com.baomidou.mybatisplus.annotation.DbType;
+import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import com.baomidou.mybatisplus.generator.AutoGenerator;
 import com.baomidou.mybatisplus.generator.InjectionConfig;
@@ -24,23 +25,23 @@ public class MybatisPlusGenerator {
     private static MybatisPlusGenerator single = null;
     /**1.修改存放路径*/
 
-    private static String path = "C:\\workspace\\idea\\gcp-actg-back\\src\\main\\java"; //文件路径
+    private static String path = "C:\\workspace\\idea\\me\\garbage-manage\\src\\main\\java"; //文件路径
 
-    private static String packagePath ="com.myself.modules.aaa";
-    private static String ReturnPath = "/com/myself/modules/aaa";            //生成文件路径
+    private static String packagePath ="com.myself.modules.basics";
+    private static String ReturnPath = "/com/myself/modules/basics";            //生成文件路径
 
     /**2.修改数据库设置*/
     //数据库
-    private static String db ="jdbc:mysql://172.16.100.246/gcp-actg?characterEncoding=UTF-8";
-    private static String username = "rule";  //用户名
-    private static String password = "@Rule1234";  //数据库密码
+    private static String db ="jdbc:mysql://39.99.161.16:3306/garbage-manage?characterEncoding=UTF-8";
+    private static String username = "root";  //用户名
+    private static String password = "0000";  //数据库密码
 
     /**3.修改需要生成的表*/
     private static String[] table = {
             /*"aaa",
             "bbb",
             "ccc"*/
-            "ac_journal"
+            "tb_user"
 
     };
 
@@ -125,11 +126,11 @@ public class MybatisPlusGenerator {
                 /**
                  *  数据库版本控制字段
                  */
-                .setVersionFieldName("version")
+//                .setVersionFieldName("version")
                 /**
                  *  数据库逻辑删除字段
                  */
-                .setLogicDeleteFieldName("status")
+                .setLogicDeleteFieldName("is_remove")
 
                 // .setSuperServiceClass("com.baomidou.mybatisplus.extension.service.IService")
                 /**
@@ -171,7 +172,7 @@ public class MybatisPlusGenerator {
                 /**
                  * 指定人员(作者)
                  */
-                .setAuthor("admin")
+                .setAuthor("xiao")
                 /**
                  * 指定输出文件夹位置
                  */
@@ -203,7 +204,7 @@ public class MybatisPlusGenerator {
                 /**
                  * 指定主键模式
                  */
-                //.setIdType(IdType.UUID)
+                .setIdType(IdType.UUID)
                 /**
                  * 生成文件后不打开文件夹
                  */

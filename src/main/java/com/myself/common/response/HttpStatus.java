@@ -94,6 +94,11 @@ public enum HttpStatus {
     USERNAME_OR_PASSWORD_ERROR(700, "username or password error用户名或密码错误" ),
 
     /**
+     * 用户名或手机号错误
+     */
+    USERNAME_OR_PHONE_ERROR(701, "username or phone error" ),
+
+    /**
      * 用户未启用
      */
     USER_NOT_ENABLED(699, "user not enabled" ),

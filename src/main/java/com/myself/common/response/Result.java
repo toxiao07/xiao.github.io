@@ -9,11 +9,11 @@ import lombok.Data;
 @ApiModel("返回说明")
 public class Result<T> {
     @ApiModelProperty(value = "返回状态码；200:成功")
-    private Integer code;//状态码
+    private Integer code;
     @ApiModelProperty(value = "提示信息")
-    private String  msg;//提示信息
+    private String  msg;
     @ApiModelProperty(value = "数据记录")
-    private T data;//数据
+    private T data;
 
     public Result() {
     }
