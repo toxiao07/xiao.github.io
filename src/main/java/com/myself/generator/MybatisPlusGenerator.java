@@ -41,7 +41,7 @@ public class MybatisPlusGenerator {
             /*"aaa",
             "bbb",
             "ccc"*/
-            "tb_user"
+            "tb_user_role"
 
     };
 

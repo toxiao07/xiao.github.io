@@ -3,8 +3,8 @@ package com.myself.modules.basics.controller;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
 import com.myself.common.response.HttpStatus;
 import com.myself.common.response.Result;
 import com.myself.common.util.md5.MD5Utils;
@@ -17,13 +17,13 @@ import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.myself.modules.basics.service.TbUserService;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -94,6 +94,7 @@ public class TbUserController {
             @ApiImplicitParam(name = "phone_num", value = "手机号", required = true, dataType = "String", paramType = "query"),
             @ApiImplicitParam(name = "picture", value = "头像", required = false, dataType = "String", paramType = "query"),
             @ApiImplicitParam(name = "signature", value = "签名", required = false, dataType = "String", paramType = "query"),
+            @ApiImplicitParam(name = "email", value = "邮箱", required = true, dataType = "String", paramType = "query"),
             @ApiImplicitParam(name = "code", value = "验证码", required = true, dataType = "String", paramType = "query"),
     })
     @PostMapping
@@ -130,13 +131,14 @@ public class TbUserController {
     }
 
 
-    @ApiOperation(value = "修改头像和签名及状态", notes = "修改")
+    @ApiOperation(value = "修改", notes = "修改")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "userId", value = "主键id", required = true, dataType = "String", paramType = "query"),
             @ApiImplicitParam(name = "username", value = "用户名", required = true, dataType = "String", paramType = "query"),
             @ApiImplicitParam(name = "picture", value = "头像", required = true, dataType = "String", paramType = "query"),
             @ApiImplicitParam(name = "signature", value = "签名", required = true, dataType = "String", paramType = "query"),
             @ApiImplicitParam(name = "status", value = "状态", required = true, dataType = "int", paramType = "query"),
+            @ApiImplicitParam(name = "email", value = "邮箱", required = true, dataType = "String", paramType = "query"),
     })
     @PutMapping
     public Result<String> register(@RequestBody TbUser record) {
@@ -300,30 +302,47 @@ public class TbUserController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "username", value = "用户名", required = false, dataType = "String", paramType = "query"),
             @ApiImplicitParam(name = "phoneNum", value = "手机号", required = false, dataType = "String", paramType = "query"),
+            @ApiImplicitParam(name = "roleId", value = "角色", required = false, dataType = "String", paramType = "query"),
             @ApiImplicitParam(name = "status", value = "状态", required = false, dataType = "int", paramType = "query"),
             @ApiImplicitParam(name = "pageNum", value = "当前页", required = true, dataType = "int", paramType = "query"),
             @ApiImplicitParam(name = "pageSize", value = "每页条数", required = true, dataType = "int", paramType = "query"),
     })
     @PostMapping("queryUserPage")
-    public Result<String> queryUserPage(@RequestBody Map<String, Object> record) {
-        Result<String> result = new Result<>();
-        String username = (String) record.get("username");
-        String phoneNum = (String) record.get("phoneNum");
-        String status = (String) record.get("status");
-        String pageNum = (String) record.get("pageNum");
-        String pageSize = (String) record.get("pageSize");
+    public Result<Map<String,Object>> queryUserPage(@RequestBody Map<String, Object> record) {
+        Result<Map<String,Object>> result = new Result<>();
+        Integer pageNum = (Integer) record.get("pageNum");
+        Integer pageSize = (Integer) record.get("pageSize");
         try {
-            QueryWrapper<TbUser> queryWrapper = new QueryWrapper<>();
-            queryWrapper.eq(!StringUtils.isEmpty(username),"username",username);
-            queryWrapper.eq(!StringUtils.isEmpty(phoneNum),"phone_num",phoneNum);
-            queryWrapper.eq(!StringUtils.isEmpty(status),"status",status);
-            IPage<TbUser> page = new Page();
-            tbUserService.getBaseMapper().selectPage(page,queryWrapper);
+            Map<String, Object> map = new HashMap<>();
+            PageHelper.startPage(pageNum,pageSize);
+            Page list = (Page)tbUserService.getUserList(record);
+            map.put("total",list.getTotal());
+            map.put("result",list.getResult());
             result.setCode(HttpStatus.OK.value());
             result.setMsg(HttpStatus.OK.name());
-
+            result.setData(map);
         } catch (Exception e) {
             logger.error("条件查询用户异常！", e);
+            result.setCode(HttpStatus.INSUFFICIENT_STORAGE.value());
+            result.setMsg(HttpStatus.INSUFFICIENT_STORAGE.name());
+        }
+        return result;
+    }
+
+    @ApiOperation(value = "回显用户信息", notes = "查询")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "userId", value = "主键", required = true, dataType = "String", paramType = "query"),
+    })
+    @GetMapping("findById")
+    public Result<TbUser> findById(String userId) {
+        Result<TbUser> result = new Result<>();
+        try {
+            TbUser tbUser = tbUserService.findById(userId);
+            result.setCode(HttpStatus.OK.value());
+            result.setMsg(HttpStatus.OK.name());
+            result.setData(tbUser);
+        } catch (Exception e) {
+            logger.error("回显用户异常！", e);
             result.setCode(HttpStatus.INSUFFICIENT_STORAGE.value());
             result.setMsg(HttpStatus.INSUFFICIENT_STORAGE.name());
         }

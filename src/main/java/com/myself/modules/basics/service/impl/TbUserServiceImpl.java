@@ -6,6 +6,10 @@ import com.myself.modules.basics.service.TbUserService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
+import java.util.List;
+import java.util.Map;
+
 
 /**
  * <p>
@@ -19,4 +23,16 @@ import org.springframework.stereotype.Service;
 public class TbUserServiceImpl extends ServiceImpl<TbUserDao, TbUser> implements TbUserService {
 
 
+    @Resource
+    private TbUserDao tbUserDao;
+
+    @Override
+    public List<TbUser> getUserList(Map<String, Object> record) {
+        return tbUserDao.getUserList(record);
+    }
+
+    @Override
+    public TbUser findById(String record) {
+        return tbUserDao.findById(record);
+    }
 }

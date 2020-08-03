@@ -1,18 +1,14 @@
 package com.myself.modules.basics.entity;
 
-import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.*;
 
 import java.util.Date;
-
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableLogic;
 
 import java.io.Serializable;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import lombok.experimental.Accessors;
@@ -54,6 +50,12 @@ public class TbUser implements Serializable {
     @ApiModelProperty(value = "签名")
     private String signature;
 
+    @ApiModelProperty(value = "邮箱")
+    private String email;
+
+    @ApiModelProperty(value = "角色")
+    private String roleId;
+
     @ApiModelProperty(value = "使用状态 0是1否")
     private Integer status;
 
@@ -63,6 +65,11 @@ public class TbUser implements Serializable {
 
     @ApiModelProperty(value = "创建时间")
     private Date createTime;
+
+
+    @ApiModelProperty(value = "角色名称")
+    @TableField(exist = false)
+    private String roleName;
 
 
 }

@@ -10,14 +10,46 @@
         <result column="phone_num" property="phoneNum"/>
         <result column="picture" property="picture"/>
         <result column="signature" property="signature"/>
+        <result column="role_id" property="roleId"/>
         <result column="status" property="status"/>
         <result column="is_remove" property="isRemove"/>
+        <result column="create_time" property="email"/>
         <result column="create_time" property="createTime"/>
     </resultMap>
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-            user_id, username, password, phone_num, picture, signature, status, is_remove, create_time
+            user_id, username, password, phone_num, picture, signature, status, is_remove, create_time,role_id,email
         </sql>
+
+    <select id="getUserList" resultType="com.myself.modules.basics.entity.TbUser" parameterType="java.util.Map">
+        SELECT
+        u.user_id, u.username, u.phone_num, u.picture, u.signature, u.status, u.create_time, u.role_id, r.role_name,u.email
+        FROM
+        tb_user u
+        LEFT JOIN tb_role r ON u.role_id = r.role_id
+        where u.is_remove = 0
+        <if test="record.username != null and ''!=record.username">
+            and u.username = #{record.username}
+        </if>
+        <if test="record.phoneNum !=null and ''!= record.phoneNum">
+            and u.phone_num = #{record.phoneNum}
+        </if>
+        <if test="record.roleId !=null and ''!= record.roleId">
+            and u.role_id = #{record.roleId}
+        </if>
+        <if test="record.status !=null">
+            and u.status = #{record.status}
+        </if>
+    </select>
+
+    <select id="findById" resultType="com.myself.modules.basics.entity.TbUser" parameterType="java.lang.String">
+        SELECT
+        u.user_id, u.username, u.phone_num, u.picture, u.signature, u.status, u.create_time, u.role_id,u.email, r.role_name
+        FROM
+        tb_user u
+        LEFT JOIN tb_role r ON u.role_id = r.role_id
+        where u.user_id = #{record}
+    </select>
 
 </mapper>
