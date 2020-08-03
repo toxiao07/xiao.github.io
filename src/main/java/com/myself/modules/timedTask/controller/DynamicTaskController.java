@@ -1,6 +1,8 @@
 package com.myself.modules.timedTask.controller;
 
 
+import com.myself.common.response.HttpStatus;
+import com.myself.common.response.Result;
 import com.myself.modules.timedTask.service.MyRunnable;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -34,7 +36,7 @@ import java.util.concurrent.TimeUnit;
  * </p>
  *
  * @author admin
- * @since 2020-07-30
+ * @since 2020-08-01
  */
 
 @RestController
@@ -52,7 +54,6 @@ public class DynamicTaskController {
     private ScheduledFuture<?> future;
 
 
-
     @Bean
     public ThreadPoolTaskScheduler threadPoolTaskScheduler() {
         return new ThreadPoolTaskScheduler();
@@ -63,27 +64,34 @@ public class DynamicTaskController {
             @ApiImplicitParam(paramType = "query", name = "time", value = "时间", required = true, dataType = "String"),
     })
     @ApiOperation("一次定时任务")
-    public void startCron1(String time) {
+    public Result<String> startCron1(String time) {
+        Result<String> result = new Result<>();
         executorService = Executors.newSingleThreadScheduledExecutor();
         try {
             Long date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(time).getTime();
             // 传入毫秒值-当前毫秒值
             long initialDelay = date - System.currentTimeMillis();
             if (initialDelay <= 0) {
-                return;
+                result.setMsg("日期小于当前时间");
+                return result;
             }
             executorService.scheduleAtFixedRate(new Runnable() {
                 @Override
                 public void run() {
-
+                    //todo 业务
                     //关闭任务
                     executorService.shutdown();
+                    result.setCode(HttpStatus.OK.value());
+                    result.setMsg(HttpStatus.OK.name());
                 }
             }, initialDelay, 24 * 60 * 60 * 1000, TimeUnit.MILLISECONDS);
 
         } catch (Exception e) {
+            result.setCode(HttpStatus.INSUFFICIENT_STORAGE.value());
+            result.setMsg(HttpStatus.INSUFFICIENT_STORAGE.name());
             logger.error("设置定时异常！", e);
         }
+        return result;
     }
 
     @GetMapping("/startCron2")
@@ -93,9 +101,7 @@ public class DynamicTaskController {
     @ApiOperation("每天定时任务")
     public void startCron2(String time) {
         stopCron();
-        if (StringUtils.isEmpty(time)) {
-            return ;
-        }
+        Result<String> result = new Result<>();
         try {
             String[] split = time.split(":");
             String cron = "0 " + split[1] + " " + split[0] + " * * ?";
@@ -106,15 +112,19 @@ public class DynamicTaskController {
                     return new CronTrigger(cron).nextExecutionTime(triggerContext);
                 }
             });
+            result.setCode(HttpStatus.OK.value());
+            result.setMsg(HttpStatus.OK.name());
         } catch (Exception e) {
+            result.setCode(HttpStatus.INSUFFICIENT_STORAGE.value());
+            result.setMsg(HttpStatus.INSUFFICIENT_STORAGE.name());
             logger.error("设置定时异常！", e);
         }
     }
 
     @GetMapping("/stopCron")
     @ApiOperation("关闭定时任务")
-    public void stopCron() {
-
+    public Result<String> stopCron() {
+        Result<String> result = new Result<>();
         try {
             if (future != null) {
                 future.cancel(true);
@@ -122,10 +132,13 @@ public class DynamicTaskController {
             if (executorService != null) {
                 executorService.shutdownNow();
             }
-
+            result.setCode(HttpStatus.OK.value());
+            result.setMsg(HttpStatus.OK.name());
         } catch (Exception e) {
+            result.setCode(HttpStatus.INSUFFICIENT_STORAGE.value());
+            result.setMsg(HttpStatus.INSUFFICIENT_STORAGE.name());
             logger.error("关闭定时任务异常！", e);
         }
-        return;
+        return result;
     }
 }
