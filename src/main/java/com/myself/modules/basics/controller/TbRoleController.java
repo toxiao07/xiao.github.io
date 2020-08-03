@@ -7,6 +7,7 @@ import com.myself.common.response.HttpStatus;
 import com.myself.common.response.Result;
 import com.myself.modules.basics.entity.TbRole;
 import com.myself.modules.basics.entity.TbUser;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
@@ -31,6 +32,7 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping("/tbRole")
+@Api(tags = "角色管理")
 public class TbRoleController {
 
     private static final Logger logger = LoggerFactory.getLogger(TbRoleController.class);

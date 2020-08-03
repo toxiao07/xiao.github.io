@@ -49,7 +49,6 @@ public class TBAuthority implements Serializable {
     private Integer status;
 
     @ApiModelProperty(value = "是否删除 0是1否")
-    @TableLogic
     private Integer isRemove;
 
     @ApiModelProperty(value = "创建人")

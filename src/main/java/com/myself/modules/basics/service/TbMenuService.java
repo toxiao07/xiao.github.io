@@ -1,7 +1,10 @@
 package com.myself.modules.basics.service;
 
+import com.myself.common.util.tree.TreeUtil;
 import com.myself.modules.basics.entity.TbMenu;
 import com.baomidou.mybatisplus.extension.service.IService;
+
+import java.util.List;
 
 /**
  * <p>
@@ -13,6 +16,12 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface TbMenuService extends IService<TbMenu>{
 
+    /**
+     * 根据角色获取菜单
+     * @param roleId
+     * @return
+     * */
+   List<TreeUtil> queryRoleByRoleId(String roleId);
 
 
 

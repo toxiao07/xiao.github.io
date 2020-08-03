@@ -5,8 +5,10 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.myself.common.response.HttpStatus;
 import com.myself.common.response.Result;
+import com.myself.common.util.tree.TreeUtil;
 import com.myself.modules.basics.entity.TbMenu;
 import com.myself.modules.basics.entity.TbRole;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
@@ -17,6 +19,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.myself.modules.basics.service.TbMenuService;
 
+import java.util.List;
 import java.util.Map;
 
 
@@ -31,6 +34,7 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping("/tbMenu")
+@Api(tags = "菜单管理")
 public class TbMenuController {
 
     private static final Logger logger = LoggerFactory.getLogger(TbMenuController.class);
@@ -152,6 +156,29 @@ public class TbMenuController {
         }
         return result;
     }
+
+
+    @ApiOperation(value = "根据权限获取菜单", notes = "查询")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "roleId", value = "角色id", required = true, dataType = "String", paramType = "query"),
+    })
+    @GetMapping("/queryRoleByRoleId")
+    public Result<List<TreeUtil>> queryRoleByRoleId(String roleId) {
+        Result<List<TreeUtil>> result = new Result<>();
+        try {
+            List<TreeUtil> list = tbMenuService.queryRoleByRoleId(roleId);
+            result.setCode(HttpStatus.OK.value());
+            result.setMsg(HttpStatus.OK.name());
+            result.setData(list);
+        } catch (Exception e) {
+            logger.error("根据权限获取菜单异常！", e);
+            result.setCode(HttpStatus.INSUFFICIENT_STORAGE.value());
+            result.setMsg(HttpStatus.INSUFFICIENT_STORAGE.name());
+        }
+        return result;
+    }
+
+
 
 
 }
